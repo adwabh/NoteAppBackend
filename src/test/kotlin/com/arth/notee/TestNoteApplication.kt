@@ -9,7 +9,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestNoteeApplication {
+class TestNoteApplication {
 
 	@Bean
 	@ServiceConnection
@@ -20,5 +20,5 @@ class TestNoteeApplication {
 }
 
 fun main(args: Array<String>) {
-	fromApplication<NoteApplication>().with(TestNoteeApplication::class).run(*args)
+	fromApplication<NoteApplication>().with(TestNoteApplication::class).run(*args)
 }
