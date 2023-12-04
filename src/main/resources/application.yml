@@ -1,0 +1,19 @@
+spring:
+  sql:
+    init:
+      mode: always
+  r2dbc:
+    url: r2dbc:postgresql://localhost/postgres
+    username: postgres
+    password: postgres
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+
+springdoc:
+  packagesToScan: com.arth.notee
+#  pathsToMatch: /v1/**
+  version: '1.0.0'
