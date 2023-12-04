@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.lang.Exception
 
 const val ERROR_GENERIC = "E402"
 const val MESSAGE_GENERIC = "Something went wrong"
