@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+	
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
@@ -30,6 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("org.postgresql:r2dbc-postgresql")
+	testImplementation("com.ninja-squad:springmockk:4.0.2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("io.projectreactor:reactor-test")

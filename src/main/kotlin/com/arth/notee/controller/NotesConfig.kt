@@ -1,7 +1,7 @@
 package com.arth.notee.controller
 
 import com.arth.notee.service.NoteService
-import io.swagger.v3.oas.annotations.info.Info
+import com.arth.notee.service.UserService
 import org.springdoc.core.annotations.RouterOperation
 import org.springdoc.core.annotations.RouterOperations
 import org.springdoc.core.models.GroupedOpenApi
@@ -46,7 +46,7 @@ class NotesConfig {
             RouterOperation(path = "/v1/note/{id}", method = arrayOf(RequestMethod.DELETE), beanClass = NoteService::class, beanMethod = "deleteNote")
         )
     )
-    fun http(@Autowired noteService: NoteService): RouterFunction<ServerResponse> {
+    fun notes(@Autowired noteService: NoteService): RouterFunction<ServerResponse> {
         return coRouter {
 
             ("/v1").nest {
@@ -63,7 +63,6 @@ class NotesConfig {
             }
         }
     }
-
 
     private fun CoRouterFunctionDsl.deleteNote(service: NoteService) = DELETE("/note/{id}") {
         service.deleteNote(it)

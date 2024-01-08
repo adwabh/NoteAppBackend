@@ -1,5 +1,7 @@
 package com.arth.notee.network
 
+import org.springframework.web.reactive.function.server.ServerResponse
+
 data class Response<T>(
     val success: Boolean,
     val code: String,
