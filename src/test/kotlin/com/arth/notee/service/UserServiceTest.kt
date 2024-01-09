@@ -5,22 +5,15 @@ import com.arth.notee.network.Response
 import com.arth.notee.repository.UserRepository
 import com.arth.notee.repository.Users
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.http.MediaType
 import org.springframework.mock.web.reactive.function.server.MockServerRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 class UserServiceTest {
@@ -37,28 +30,11 @@ class UserServiceTest {
     @BeforeEach
     fun setUp() {
         userService = UserService(userRepository)
-        val usersRoute = userConfig.users(userService)
-//        client = WebTestClient.bindToRouterFunction(usersRoute).build()
+        userConfig.users(userService)
     }
     @AfterEach
     fun tearDown() {
     }
-
-    /*@Test
-    fun `getAllUsers should return all users`() {
-        //Assign
-        val users = Users(1, "user1", email = "user1@domain.com")
-        coEvery { userRepository.findAll() } returns flowOf(users)
-        //Act //Assert
-       val str =  client.get()
-            .uri("v1/user")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus().is2xxSuccessful
-            .expectBody()
-            .returnResult().mockServerResult.toStr()
-            println(str)
-    }*/
 
     @Test
     fun `getUserById should return user with given id`() = runBlocking {
@@ -76,50 +52,117 @@ class UserServiceTest {
 
     @Test
     fun `createUser should create user`() {
+        runBlocking {
+            // Assign
+            val user = Users(username = "user1", email = "user1@domain.com")
+            coEvery { userRepository.save(user) } returns user
+            // Act
+            val actual = userService.createUser(user)
+            // Assert
+            assert(user == actual)
+        }
 
     }
 
     @Test
     fun `updateUser should update user`() {
+        runBlocking {
+            // Assign
+            val users = Users(1, "user1", email = "user1@domain.com")
+            val expected = Response.success("S200", users)
+            coEvery { userRepository.findById(1) } returns users
+            coEvery { userRepository.save(users) } returns users
+            // Act
+            val actual = userService.updateUser(users)
+            // Assert
+            assert(expected == actual)
+        }
     }
 
     @Test
     fun `deleteUser should delete user`() {
+        runBlocking {
+            // Assign
+            val users = Users(1, "user1", email = "user1@domain.com")
+            coEvery { userRepository.findById(1) } returns users
+            coEvery { userRepository.delete(users) } returns Unit
+            // Act
+            assertDoesNotThrow { userService.deleteUser(users.userid!!) }
+        }
     }
 
     @Test
     fun `deleteUser should return 404 if user not found`() {
-    }
-
-    @Test
-    fun `deleteUser should return 500 if error occurs`() {
+        // Assign
+        runBlocking {
+            val user = Users(1, "user1", email = "user1@domain.com")
+            coEvery { userRepository.findById(1) } returns null
+            coEvery { userRepository.delete(user) } returns Unit
+            // Act
+            val res = userService.deleteUser(user.userid!!)
+            // Assert
+            assertAll(
+                { assert(res.success == false) },
+                { assert(res.code == "E404") },
+                { assert(res.error?.message == "user not found") },
+                { assert(res.body == null) }
+            )
+        }
     }
 
     @Test
     fun `updateUser should return 404 if user not found`() {
-    }
-
-    @Test
-    fun `updateUser should return 500 if error occurs`() {
-    }
-
-    @Test
-    fun `createUser should return 500 if error occurs`() {
+        // Assign
+        runBlocking {
+            val user = Users(1, "user1", email = "user1@domain.com")
+            coEvery { userRepository.findById(1) } returns null
+            coEvery { userRepository.save(user) } returns user
+            // Act
+            val res = userService.updateUser(user)
+            // Assert
+            assertAll(
+                { assert(res.success == false) },
+                { assert(res.code == "E404") },
+                { assert(res.error?.message == "user not found") },
+                { assert(res.body == null) }
+            )
+        }
     }
 
     @Test
     fun `getUserById should return 404 if user not found`() {
-    }
-    @Test
-    fun `getUserById should return 500 if error occurs`() {
+        runBlocking {
+            // Assign
+            val user = Users(1, "user1", email = "")
+            coEvery { userRepository.findById(1) } returns null
+            coEvery { userRepository.save(user) } returns user
+            // Act
+            val res = userService.getUserById(user.userid!!)
+            // Assert
+            assertAll(
+                { assert(res.success == false) },
+                { assert(res.code == "E404") },
+                { assert(res.error?.message == "user not found") },
+                { assert(res.body == null) }
+            )
+        }
     }
 
     @Test
-    fun `getAllUsers should return 500 if error occurs`() {
+    fun `getAllUsers should return empty list if no users found`() {
+        runBlocking {
+            // Assign
+            coEvery { userRepository.findAll() } returns flowOf()
+            // Act
+            val res = userService.getAllUsers()
+            // Assert
+            assertAll(
+                { assert(res.success) },
+                { assert(res.code == "S200") },
+                { assert(res.error == null) },
+                { assert(res.body!!.isEmpty()) }
+            )
     }
-
-    @Test
-    fun `getAllUsers should return 404 if no users found`() {
     }
 
     @Test
@@ -133,8 +176,8 @@ class UserServiceTest {
         val user1 = Users(1, "user1", "user1@domain.com")
         every { userRepository.findAll() } returns flowOf(user1)
         //Act
-        val request = MockServerRequest.builder().build()
-        userService.getAllUsers(request)
+        MockServerRequest.builder().build()
+        userService.getAllUsers()
         //Assert
         coVerify(atLeast = 1) { userRepository.findAll() }
     }
@@ -143,9 +186,7 @@ class UserServiceTest {
     fun `getUserById should call repository findById`() = runBlocking {
         //Assign
         val id = 1
-        val request = MockServerRequest.builder()
-            .header("id", id.toString())
-            .build()
+
         coEvery { userRepository.findById(id) } returns Users(id, "user1", "user1@domain.com")
         //Act
         userService.getUserById(id)
@@ -157,13 +198,10 @@ class UserServiceTest {
     fun `createUser should call repository save`() = runBlocking {
         //Assign
         val user = Users(username = "user1", email = "user1@domain.com")
-        val request = MockServerRequest.builder()
-            .uri(URI.create("/note"))
-            .body(Flux.from(Mono.just(user)))
 
         coEvery { userRepository.save(user) } returns user
         //Act
-        userService.createUser(request)
+        userService.createUser(user)
         //Assert
         coVerify {
             userRepository.save(user)
@@ -173,14 +211,11 @@ class UserServiceTest {
     @Test
     fun `updateUser should call repository save`() = runBlocking {
         //Assign
-        val request = MockServerRequest.builder()
-            .header("id", "1")
-            .body(Flux.from(Mono.empty<Users>()))
         val user = Users(1, "user1", "user1@domain.com")
         coEvery { userRepository.findById(1) } returns user
         coEvery { userRepository.save(user) } returns user
         //Act
-        userService.updateUser(request)
+        userService.updateUser(user)
         //Assert
         coVerify { userRepository.save(any()) }
     }
@@ -192,8 +227,7 @@ class UserServiceTest {
         coEvery { userRepository.findById(1) } returns user
         coEvery { userRepository.delete(user) } returns Unit
         //Act
-        val request = MockServerRequest.builder().header("id", "1").build()
-        userService.deleteUser(request)
+        userService.deleteUser(user.userid!!)
         //Assert
         coVerify {
             userRepository.delete(user)
