@@ -9,13 +9,20 @@ import org.springdoc.core.annotations.RouterOperations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.reactive.function.server.*
 
 @Configuration
 class UsersConfig {
     @Bean
     @RouterOperations(
-        RouterOperation()
+        *arrayOf(
+            RouterOperation(path = "/v1/user", method = arrayOf(RequestMethod.GET), beanClass = UserService::class, beanMethod = "getAllUsers"),
+            RouterOperation(path = "/v1/user/{id}", method = arrayOf(RequestMethod.GET), beanClass = UserService::class, beanMethod = "getUserById"),
+            RouterOperation(path = "/v1/user", method = arrayOf(RequestMethod.POST), beanClass = UserService::class, beanMethod = "createUser"),
+            RouterOperation(path = "/v1/user/{id}", method = arrayOf(RequestMethod.PUT), beanClass = UserService::class, beanMethod = "updateUser"),
+            RouterOperation(path = "/v1/user/{id}", method = arrayOf(RequestMethod.DELETE), beanClass = UserService::class, beanMethod = "deleteUser")
+        )
     )
     fun users(@Autowired userService: UserService): RouterFunction<ServerResponse> {
         return coRouter {

@@ -43,4 +43,177 @@ class NotesConfigTest {
             .expectBody()
             .returnResult().responseBody.toString()
     }
+
+    @Test
+    fun `notes should return note by id`() {
+        // Assign
+        val notes = Notes(1, "note1", "note1 content", OffsetDateTime.now(), OffsetDateTime.now())
+        coEvery { notesRepository.findById("1") } returns notes
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/1")
+            .exchange()
+            .expectStatus().is2xxSuccessful
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should create note`() {
+        // Assign
+        val notes = Notes(1, "note1", "note1 content", OffsetDateTime.now(), OffsetDateTime.now())
+        coEvery { notesRepository.save(notes) } returns notes
+        // Act // Assert
+        client.post()
+            .uri("/v1/note")
+            .exchange()
+            .expectStatus().is2xxSuccessful
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should update note`() {
+        // Assign
+        val notes = Notes(1, "note1", "note1 content", OffsetDateTime.now(), OffsetDateTime.now())
+        coEvery { notesRepository.save(notes) } returns notes
+        // Act // Assert
+        client.put()
+            .uri("/v1/note/1")
+            .exchange()
+            .expectStatus().is2xxSuccessful
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should delete note`() {
+        // Assign
+        val notes = Notes(1, "note1", "note1 content", OffsetDateTime.now(), OffsetDateTime.now())
+        coEvery { notesRepository.save(notes) } returns notes
+        // Act // Assert
+        client.delete()
+            .uri("/v1/note/1")
+            .exchange()
+            .expectStatus().is2xxSuccessful
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 404 if note not found`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/2")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note id is not provided`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note body is not provided`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note title is not provided`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note created date is not provided`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note updated date is not provided`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note id is not valid`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note body is not valid`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
+
+    @Test
+    fun `notes should return error 400 if note title is not valid`() {
+        // Assign
+        coEvery { notesRepository.findById("2") } returns null
+        // Act // Assert
+        client.get()
+            .uri("/v1/note/")
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .returnResult().responseBody.toString()
+    }
 }
