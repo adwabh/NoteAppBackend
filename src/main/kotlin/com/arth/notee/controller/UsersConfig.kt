@@ -6,7 +6,9 @@ import com.arth.notee.service.UserService
 import kotlinx.coroutines.flow.firstOrNull
 import org.springdoc.core.annotations.RouterOperation
 import org.springdoc.core.annotations.RouterOperations
+import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.RequestMethod
@@ -14,6 +16,22 @@ import org.springframework.web.reactive.function.server.*
 
 @Configuration
 class UsersConfig {
+
+    @Bean
+    fun usersOpenApi(@Value("\${springdoc.version}") appVersion: String?): GroupedOpenApi {
+        val paths = arrayOf("/v1/user/**")
+        return GroupedOpenApi.builder().group("user")
+            .pathsToMatch(*paths)
+            .packagesToScan("com.arth.notee.controller")
+            .addOpenApiCustomizer { openApi ->
+                openApi.info(
+                    io.swagger.v3.oas.models.info.Info().title("User API")
+                        .version(appVersion)
+                        .description("User API Information")
+                )
+            }
+            .build()
+    }
     @Bean
     @RouterOperations(
         *arrayOf(

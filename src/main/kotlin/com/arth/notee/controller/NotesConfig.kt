@@ -23,7 +23,7 @@ class NotesConfig {
 
     @Bean
     fun notesOpenApi(@Value("\${springdoc.version}") appVersion: String?): GroupedOpenApi {
-        val paths = arrayOf("/v1/**")
+        val paths = arrayOf("/v1/note/**")
         return GroupedOpenApi.builder().group("notes")
             .pathsToMatch(*paths)
             .packagesToScan("com.arth.notee.controller")
