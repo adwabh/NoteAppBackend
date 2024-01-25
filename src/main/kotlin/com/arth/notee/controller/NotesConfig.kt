@@ -2,6 +2,7 @@ package com.arth.notee.controller
 
 import com.arth.notee.service.NoteService
 import com.arth.notee.service.UserService
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import org.springdoc.core.annotations.RouterOperation
 import org.springdoc.core.annotations.RouterOperations
 import org.springdoc.core.models.GroupedOpenApi
@@ -41,7 +42,7 @@ class NotesConfig {
         *arrayOf(
             RouterOperation(path = "/v1/note", method = arrayOf(RequestMethod.GET), beanClass = NoteService::class, beanMethod = "getAllNotes"),
             RouterOperation(path = "/v1/note/{id}", method = arrayOf(RequestMethod.GET), beanClass = NoteService::class, beanMethod = "getNoteById"),
-            RouterOperation(path = "/v1/note", method = arrayOf(RequestMethod.POST), beanClass = NoteService::class, beanMethod = "createNote"),
+            RouterOperation(path = "/v1/note", method = arrayOf(RequestMethod.POST), beanClass = NoteService::class, beanMethod = "createNote", consumes = arrayOf()),
             RouterOperation(path = "/v1/note/{id}", method = arrayOf(RequestMethod.PUT), beanClass = NoteService::class, beanMethod = "updateNote"),
             RouterOperation(path = "/v1/note/{id}", method = arrayOf(RequestMethod.DELETE), beanClass = NoteService::class, beanMethod = "deleteNote")
         )
@@ -81,6 +82,4 @@ class NotesConfig {
     private fun CoRouterFunctionDsl.getAllNotes(service: NoteService) = GET("/notes") { it ->
         service.getAllNotes(it)
     }
-
-
 }
