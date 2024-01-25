@@ -8,6 +8,9 @@ import com.arth.notee.network.converter.Converters.toResponse
 import com.arth.notee.repository.Notes
 import com.arth.notee.repository.NotesCoRoutinesRepository
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import kotlinx.coroutines.flow.map
@@ -32,7 +35,7 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         responses = [ApiResponse(responseCode = "200", description = "Note deleted"), ApiResponse(
             responseCode = "404", description = "Note not found"
         )],
-        requestBody = RequestBody(description = "Note id", required = true)
+        parameters = [Parameter(`in` = ParameterIn.PATH, name = "id", description = "id of note to be deleted", required = true, example = "1")]
     )
     suspend fun deleteNote(
         it: ServerRequest
@@ -81,7 +84,8 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         method = "POST",
         summary = "Create note",
         description = "Create note",
-        responses = [ApiResponse(responseCode = "200", description = "Note created")]
+        responses = [ApiResponse(responseCode = "200", description = "Note created")],
+requestBody = RequestBody(description = "Note title and body", required = true)
     )
     suspend fun createNote(it: ServerRequest): ServerResponse = with(it.headers()) {
         if (header("title").isNotEmpty() || header("body").isNotEmpty()) {
@@ -109,8 +113,7 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         description = "Get note by id",
         responses = [ApiResponse(responseCode = "200", description = "Note found"), ApiResponse(
             responseCode = "404", description = "Note not found"
-        )],
-        requestBody = RequestBody(description = "Note id", required = true)
+        )]
     )
     suspend fun getNoteById(it: ServerRequest): ServerResponse {
         val note = repo.findById(it.pathVariable("id"))
