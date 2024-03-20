@@ -35,7 +35,13 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         responses = [ApiResponse(responseCode = "200", description = "Note deleted"), ApiResponse(
             responseCode = "404", description = "Note not found"
         )],
-        parameters = [Parameter(`in` = ParameterIn.PATH, name = "id", description = "id of note to be deleted", required = true, example = "1")]
+        parameters = [Parameter(
+            `in` = ParameterIn.PATH,
+            name = "id",
+            description = "id of note to be deleted",
+            required = true,
+            example = "1"
+        )]
     )
     suspend fun deleteNote(
         it: ServerRequest
@@ -66,14 +72,19 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
                 } else {
                     ServerResponse.from(
                         ErrorResponse.builder(
-                            IllegalArgumentException(), HttpStatus.NO_CONTENT, "Something went wrong"
+                            IllegalArgumentException(),
+                            HttpStatus.NO_CONTENT,
+                            "Something went wrong"
                         ).build()
                     ).awaitSingle()
                 }
             } else {
                 ServerResponse.from(
-                    ErrorResponse.builder(
-                        IllegalArgumentException(), HttpStatus.BAD_REQUEST, "empty value for inputs"
+                    ErrorResponse
+                        .builder(
+                        IllegalArgumentException(),
+                            HttpStatus.BAD_REQUEST,
+                            "empty value for inputs"
                     ).build()
                 ).awaitSingle()
             }
@@ -85,7 +96,7 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         summary = "Create note",
         description = "Create note",
         responses = [ApiResponse(responseCode = "200", description = "Note created")],
-requestBody = RequestBody(description = "Note title and body", required = true)
+        requestBody = RequestBody(description = "Note title and body", required = true)
     )
     suspend fun createNote(it: ServerRequest): ServerResponse = with(it.headers()) {
         if (header("title").isNotEmpty() || header("body").isNotEmpty()) {
