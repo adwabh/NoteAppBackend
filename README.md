@@ -1,0 +1,1 @@
+docker run --name notee-1.0.0 -p 80:80 -v volumes:/execution-server/data -v %USERPROFILE%\.actico\license:/execution-server/config/license --env actico.execution.server.environment-identifier=dev --env actico.execution.server.environment-api-key=<enter-api-key-here> execution-server:9.1.22
