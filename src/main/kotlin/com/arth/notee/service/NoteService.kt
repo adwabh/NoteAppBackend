@@ -155,6 +155,6 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
             it.toResponse()!!
         }
         val notes = repo.findAll().map(transform).toList(destination)
-        return ServerResponse.ok().bodyValue(Response.success("", NotesListResponse(notes))).awaitSingle()
+        return ServerResponse.ok().bodyValue(Response.success("", notes)).awaitSingle()
     }
 }

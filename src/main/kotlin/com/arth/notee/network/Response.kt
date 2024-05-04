@@ -3,13 +3,13 @@ package com.arth.notee.network
 data class Response<T>(
     val success: Boolean,
     val code: String,
-    val body: T?,
+    val data: T?,
     val error: ErrorResponse?
 
 ) {
     companion object {
         fun <T> success(code: String, body: T): Response<T> {
-            return Response(true, code, body = body, error = null)
+            return Response(true, code, data = body, error = null)
         }
 
         fun failure(code: String, message: String): Response<Nothing> {

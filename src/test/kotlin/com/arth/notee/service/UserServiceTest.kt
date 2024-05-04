@@ -105,7 +105,7 @@ class UserServiceTest {
                 { assert(res.success == false) },
                 { assert(res.code == "E404") },
                 { assert(res.error?.message == "user not found") },
-                { assert(res.body == null) }
+                { assert(res.data == null) }
             )
         }
     }
@@ -124,7 +124,7 @@ class UserServiceTest {
                 { assert(res.success == false) },
                 { assert(res.code == "E404") },
                 { assert(res.error?.message == "user not found") },
-                { assert(res.body == null) }
+                { assert(res.data == null) }
             )
         }
     }
@@ -143,7 +143,7 @@ class UserServiceTest {
                 { assert(res.success == false) },
                 { assert(res.code == "E404") },
                 { assert(res.error?.message == "user not found") },
-                { assert(res.body == null) }
+                { assert(res.data == null) }
             )
         }
     }
@@ -160,7 +160,7 @@ class UserServiceTest {
                 { assert(res.success) },
                 { assert(res.code == "S200") },
                 { assert(res.error == null) },
-                { assert(res.body!!.isEmpty()) }
+                { assert(res.data!!.isEmpty()) }
             )
     }
     }
