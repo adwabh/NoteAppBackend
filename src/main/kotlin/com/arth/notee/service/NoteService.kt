@@ -2,7 +2,6 @@ package com.arth.notee.service
 
 import com.arth.notee.exception.MESSAGE_GENERIC
 import com.arth.notee.network.NoteResponse
-import com.arth.notee.network.NotesListResponse
 import com.arth.notee.network.Response
 import com.arth.notee.network.converter.Converters.toResponse
 import com.arth.notee.repository.Notes
@@ -10,7 +9,6 @@ import com.arth.notee.repository.NotesCoRoutinesRepository
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.enums.ParameterIn
-import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import kotlinx.coroutines.flow.map
@@ -66,9 +64,14 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
         return with(it.headers()) {
             if (header("title").isNotEmpty() || header("body").isNotEmpty()) {
                 if (entity != null) {
-                    val update = entity.copy(title = header("title").first(), body = header("body").first())
-                    val id = repo.save(update)
-                    ServerResponse.ok().bodyValueAndAwait(Response.success("S200", id))
+                    val update = entity.copy(
+                        title = header("title").first(),
+                        body = header("body").first(),
+                        updatedDate = OffsetDateTime.now()
+                    )
+                    val updated = repo.save(update)
+                    val res = updated.toResponse()
+                    ServerResponse.ok().bodyValueAndAwait(Response.success("S200", res))
                 } else {
                     ServerResponse.from(
                         ErrorResponse.builder(
@@ -107,8 +110,8 @@ class NoteService(@Autowired val repo: NotesCoRoutinesRepository) {
                 OffsetDateTime.now(),
                 OffsetDateTime.now()
             )
-            val id = repo.save(note)
-            ServerResponse.ok().bodyValue(Response.success("S200", id)).awaitSingle()
+            val res = repo.save(note).toResponse()
+            ServerResponse.ok().bodyValue(Response.success("S200", res)).awaitSingle()
         } else {
             ServerResponse.from(
                 ErrorResponse.builder(
